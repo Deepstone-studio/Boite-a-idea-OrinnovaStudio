@@ -1,6 +1,6 @@
 {
   "name": "boite-a-idees",
-  "version": "1.0.2",
+  "version": "1.0.1",
   "description": "Boîte à idées - application desktop Electron pour capturer et organiser vos idées",
   "main": "main.js",
   "scripts": {
@@ -8,11 +8,13 @@
     "dev": "electron .",
     "build": "electron-builder",
     "build:win": "electron-builder --win",
-    "build:mac": "electron-builder --mac"
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux AppImage",
+    "postinstall": "electron-builder install-app-deps"
   },
   "build": {
-    "appId": "com.orinstone.boite-a-idees",
-    "productName": "Boîte à idées",
+    "appId": "com.orinnova.boite-a-idees",
+    "productName": "Boite-a-idees",
     "directories": {
       "output": "dist"
     },
@@ -20,15 +22,23 @@
       "main.js",
       "preload.js",
       "store.js",
-      "public/**/*",
-      "node_modules/**/*"
+      "updater.js",
+      "public/**/*"
     ],
-    "linux": {
-      "target": ["AppImage"], 
-      "category": "Utility"
-    },
+    "asar": true,
     "win": {
-      "target": ["nsis"]
+      "target": ["nsis"],
+      "icon": "public/icon.ico"
+    },
+    "mac": {
+      "target": ["dmg", "zip"],
+      "icon": "public/icon.icns",
+      "category": "public.app-category.productivity"
+    },
+    "linux": {
+      "target": ["AppImage"],
+      "category": "Utility",
+      "icon": "public/icon.png"
     },
     "publish": {
       "provider": "github",
@@ -43,7 +53,7 @@
     "sqlite",
     "electron"
   ],
-  "author": "Orinstone Studio",
+  "author": "Orinnova Studio",
   "license": "MIT",
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -53,6 +63,7 @@
   },
   "devDependencies": {
     "@electron/rebuild": "^4.2.1",
-    "electron": "^45.0.0"
+    "electron": "^45.0.0",
+    "electron-builder": "^25.1.8"
   }
 }
