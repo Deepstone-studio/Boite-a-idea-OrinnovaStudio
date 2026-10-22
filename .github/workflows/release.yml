@@ -4,7 +4,7 @@ on:
   push:
     tags:
       - 'v*'
-  workflow_dispatch:  # Permet de lancer manuellement depuis l'UI GitHub
+  workflow_dispatch:
 
 jobs:
   release:
@@ -14,7 +14,7 @@ jobs:
         os: [windows-latest, macos-latest, ubuntu-latest]
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -26,20 +26,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build & Publish (Windows)
-        if: matrix.os == 'windows-latest'
-        run: npx electron-builder --win --publish always
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: Rebuild native modules
+        run: npx @electron/rebuild -f -w better-sqlite3
 
-      - name: Build & Publish (macOS)
-        if: matrix.os == 'macos-latest'
-        run: npx electron-builder --mac --publish always
+      - name: Build & Publish
+        run: npx electron-builder --publish always
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-
-      - name: Build & Publish (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        run: npx electron-builder --linux --publish always
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          DEBUG: "electron-builder"
