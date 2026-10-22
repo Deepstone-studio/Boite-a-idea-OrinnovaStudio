@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="./css/style.css" />
 </head>
 <body class="flex items-center justify-center min-h-screen px-4">
   <div class="w-full max-w-md fade-in">
@@ -48,7 +48,7 @@
   </div>
 
   <div id="toast"></div>
-  <script src="js/api.js"></script>
+  <script src="./js/api.js"></script>
   <script>
     function showToast(msg, type='error') {
       const t = document.getElementById('toast');
@@ -63,7 +63,6 @@
         const data = await window.api.login({ email: f.email.value, password: f.password.value });
         if (data.error) throw new Error(data.error);
         
-        // Assuming API returns { token: "...", user: {...} }
         if(data.token) window.setToken(data.token);
         
         showToast('Connexion réussie', 'success');

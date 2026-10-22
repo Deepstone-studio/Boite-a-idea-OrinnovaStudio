@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Boîte à idées — Orinstone Studio</title>
+  <title>Boîte à idées — Orinnova Studio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="./css/style.css" />
 </head>
 <body>
   <nav class="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
@@ -73,16 +73,16 @@
   </main>
 
   <footer class="text-center text-slate-500 text-sm py-8 border-t border-white/5">
-    © 2026-2029 Orinnovastudio Studio — Boîte à idées
+    © 2026-2029 Orinnova Studio — Boîte à idées
   </footer>
 
-  <script src="js/api.js"></script>
+  <script src="./js/api.js"></script>
   <script>
     (async () => {
       try {
         const r = await window.api.me();
         if (r && r.user) window.location.href = 'app.html';
-      } catch (e) { /* Not logged in, stay on landing page */ }
+      } catch (e) { /* Non connecté, rester sur la page d'accueil */ }
     })();
   </script>
 </body>

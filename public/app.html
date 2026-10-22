@@ -9,10 +9,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="./css/style.css" />
 </head>
 <body class="min-h-screen">
-  <!-- Top bar -->
   <header class="sticky top-0 z-30 backdrop-blur-xl bg-slate-900/60 border-b border-white/5">
     <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
@@ -27,14 +26,13 @@
           <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
         </button>
         <button id="checkUpdateBtn" class="btn btn-ghost py-2 px-3 text-sm" title="Vérifier les mises à jour">
-  <i class="fa-solid fa-arrows-rotate"></i> Mises à jour
-</button>
+          <i class="fa-solid fa-arrows-rotate"></i> Mises à jour
+        </button>
       </div>
     </div>
   </header>
 
   <main class="max-w-7xl mx-auto px-6 py-8">
-    <!-- Toolbar -->
     <div class="flex flex-col md:flex-row gap-3 md:items-center md:justify-between mb-6">
       <div class="flex flex-1 gap-3">
         <div class="relative flex-1 max-w-md">
@@ -58,7 +56,6 @@
       </button>
     </div>
 
-    <!-- Stats -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
       <div class="glass p-4">
         <div class="text-slate-400 text-xs">Total</div>
@@ -78,7 +75,6 @@
       </div>
     </div>
 
-    <!-- Grid -->
     <div id="ideasGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
     <div id="emptyState" class="hidden text-center py-20">
       <div class="w-20 h-20 rounded-2xl bg-white/5 flex items-center justify-center mx-auto mb-4">
@@ -89,7 +85,6 @@
     </div>
   </main>
 
-  <!-- Modal -->
   <div id="modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="modalBackdrop"></div>
     <div class="relative glass-strong w-full max-w-lg p-6 fade-in">
@@ -135,45 +130,45 @@
       </form>
     </div>
   </div>
+
   <div id="updateToast" class="hidden fixed bottom-24 right-24 z-100 glass p-4 fade-in max-w-sm">
-  <div class="flex items-center gap-3">
-    <i class="fa-solid fa-download text-indigo-400 text-xl"></i>
-    <div>
-      <div class="font-semibold text-sm">Mise à jour disponible</div>
-      <div class="text-xs text-slate-400 mt-1" id="updateVersionInfo"></div>
-      <div class="w-full bg-white/10 rounded-full h-1.5 mt-2 overflow-hidden">
-        <div id="updateProgressBar" class="bg-gradient-to-r from-indigo-500 to-pink-500 h-full transition-all duration-300" style="width: 0%"></div>
+    <div class="flex items-center gap-3">
+      <i class="fa-solid fa-download text-indigo-400 text-xl"></i>
+      <div>
+        <div class="font-semibold text-sm">Mise à jour disponible</div>
+        <div class="text-xs text-slate-400 mt-1" id="updateVersionInfo"></div>
+        <div class="w-full bg-white/10 rounded-full h-1.5 mt-2 overflow-hidden">
+          <div id="updateProgressBar" class="bg-gradient-to-r from-indigo-500 to-pink-500 h-full transition-all duration-300" style="width: 0%"></div>
+        </div>
       </div>
     </div>
   </div>
-</div>
-  
 
   <div id="toast"></div>
 
+  <script src="./js/api.js"></script>
   <script>
     const $ = (s) => document.querySelector(s);
     const $$ = (s) => document.querySelectorAll(s);
 
-
     let state = { ideas: [], search: '', category: 'all', pinnedOnly: false, editingId: null };
-  // Écouter les événements de mise à jour
-  window.api.onUpdateAvailable((info) => {
-    const toast = document.getElementById('updateToast');
-    const versionInfo = document.getElementById('updateVersionInfo');
-    toast.classList.remove('hidden');
-    versionInfo.textContent = `Version ${info.version} en cours de téléchargement...`;
-  });
 
-  window.api.onDownloadProgress((percent) => {
-    const bar = document.getElementById('updateProgressBar');
-    bar.style.width = `${percent}%`;
-  });
+    window.api.onUpdateAvailable((info) => {
+      const toast = document.getElementById('updateToast');
+      const versionInfo = document.getElementById('updateVersionInfo');
+      toast.classList.remove('hidden');
+      versionInfo.textContent = `Version ${info.version} en cours de téléchargement...`;
+    });
 
-// Bouton de vérification manuelle
-document.getElementById('checkUpdateBtn')?.addEventListener('click', async () => {
-  await window.api.checkUpdate();
-});
+    window.api.onDownloadProgress((percent) => {
+      const bar = document.getElementById('updateProgressBar');
+      bar.style.width = `${percent}%`;
+    });
+
+    document.getElementById('checkUpdateBtn')?.addEventListener('click', async () => {
+      await window.api.checkUpdate();
+    });
+
     function showToast(msg, type='error') {
       const t = $('#toast');
       t.innerHTML = `<div class="toast ${type==='success'?'border-emerald-500/40':'border-red-500/40'}"><i class="fa-solid ${type==='success'?'fa-check-circle text-emerald-400':'fa-circle-exclamation text-red-400'} mr-2"></i>${msg}</div>`;
@@ -181,9 +176,13 @@ document.getElementById('checkUpdateBtn')?.addEventListener('click', async () =>
     }
 
     async function loadUser() {
-      const r = await window.api.me();
-      if (!r || !r.user) { window.location.href = '/login.html'; return; }
-      $('#userInfo').textContent = r.user.username;
+      try {
+        const r = await window.api.me();
+        if (!r || !r.user) { window.location.href = 'login.html'; return; }
+        $('#userInfo').textContent = r.user.username;
+      } catch (e) {
+        window.location.href = 'login.html';
+      }
     }
 
     async function loadIdeas() {
@@ -191,11 +190,16 @@ document.getElementById('checkUpdateBtn')?.addEventListener('click', async () =>
       if (state.search) q.search = state.search;
       if (state.category && state.category !== 'all') q.category = state.category;
       if (state.pinnedOnly) q.pinned = '1';
-      const r = await window.api.listIdeas(q);
-      if (r.error) { showToast(r.error); return; }
-      state.ideas = r.ideas || [];
-      render();
-      updateStats();
+      
+      try {
+        const r = await window.api.listIdeas(q);
+        if (r.error) { showToast(r.error); return; }
+        state.ideas = r.ideas || [];
+        render();
+        updateStats();
+      } catch (err) {
+        showToast("Impossible de charger les idées");
+      }
     }
 
     function updateStats() {
@@ -252,14 +256,13 @@ document.getElementById('checkUpdateBtn')?.addEventListener('click', async () =>
       `).join('');
     }
 
-    // Modal controls
     function openModal(idea = null) {
       const modal = $('#modal');
       modal.classList.remove('hidden');
       const form = $('#ideaForm');
       form.reset();
       if (idea) {
-        $('#modalTitle').textContent = 'Modifier l’idée';
+        $('#modalTitle').textContent = 'Modifier l\'idée';
         form.id.value = idea.id;
         form.title.value = idea.title;
         form.content.value = idea.content;
@@ -272,6 +275,7 @@ document.getElementById('checkUpdateBtn')?.addEventListener('click', async () =>
         state.editingId = null;
       }
     }
+
     function closeModal() {
       $('#modal').classList.add('hidden');
       state.editingId = null;
@@ -308,7 +312,6 @@ document.getElementById('checkUpdateBtn')?.addEventListener('click', async () =>
       }
     });
 
-    // grid actions (delegation)
     $('#ideasGrid').addEventListener('click', async (e) => {
       const btn = e.target.closest('button[data-action]');
       if (!btn) return;
@@ -328,7 +331,6 @@ document.getElementById('checkUpdateBtn')?.addEventListener('click', async () =>
       }
     });
 
-    // filters
     $('#searchInput').addEventListener('input', (e) => {
       state.search = e.target.value;
       loadIdeas();
@@ -346,10 +348,9 @@ document.getElementById('checkUpdateBtn')?.addEventListener('click', async () =>
 
     $('#logoutBtn').addEventListener('click', async () => {
       await window.api.logout();
-      window.location.href = '/login.html';
+      window.location.href = 'login.html';
     });
 
-    // init
     (async () => {
       await loadUser();
       await loadIdeas();
