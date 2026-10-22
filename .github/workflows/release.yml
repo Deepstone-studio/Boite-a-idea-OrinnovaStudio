@@ -8,10 +8,18 @@ on:
 
 jobs:
   release:
-    runs-on: ubuntu-latest # ⚠️ Attention : utilisez ubuntu-latest pour Linux, windows-latest pour Windows
+    # La matrice définit des environnements totalement isolés
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+      fail-fast: false # ⚠️ CRITIQUE : Empêche d'annuler un job si l'autre échoue
+
+    runs-on: ${{ matrix.os }}
+
     steps:
-      - uses: actions/checkout@v4
-      
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -21,14 +29,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Rebuild native modules
+      - name: Rebuild native modules for Electron
         run: npx @electron/rebuild -f -w better-sqlite3
 
-      # ✅ AJOUTEZ CETTE ÉTAPE ICI
-      - name: Install Snapcraft
-        run: sudo snap install snapcraft --classic
+      # Condition pour cibler uniquement AppImage sur Linux (évite Snapcraft)
+      - name: Build & Publish (Linux AppImage)
+        if: matrix.os == 'ubuntu-latest'
+        run: npx electron-builder --linux AppImage --publish always
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build & Publish
-        run: npx electron-builder --linux --publish always
+      # Condition pour cibler uniquement NSIS sur Windows
+      - name: Build & Publish (Windows Installer)
+        if: matrix.os == 'windows-latest'
+        run: npx electron-builder --win nsis --publish always
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
