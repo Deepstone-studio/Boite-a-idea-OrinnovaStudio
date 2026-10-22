@@ -8,15 +8,10 @@ on:
 
 jobs:
   release:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
-
+    runs-on: ubuntu-latest # ⚠️ Attention : utilisez ubuntu-latest pour Linux, windows-latest pour Windows
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -29,8 +24,11 @@ jobs:
       - name: Rebuild native modules
         run: npx @electron/rebuild -f -w better-sqlite3
 
+      # ✅ AJOUTEZ CETTE ÉTAPE ICI
+      - name: Install Snapcraft
+        run: sudo snap install snapcraft --classic
+
       - name: Build & Publish
-        run: npx electron-builder --publish always
+        run: npx electron-builder --linux --publish always
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          DEBUG: "electron-builder"
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
