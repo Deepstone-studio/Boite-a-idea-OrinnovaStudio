@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Boîte à idées — Orinstone Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <nav class="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-pink-500 flex items-center justify-center shadow-lg">
+        <i class="fa-solid fa-lightbulb text-white"></i>
+      </div>
+      <span class="font-bold text-lg">Boîte à idées</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <a href="login.html" class="btn btn-ghost">Connexion</a>
+      <a href="register.html" class="btn btn-primary">Créer un compte</a>
+    </div>
+  </nav>
+
+  <main class="max-w-6xl mx-auto px-6 pt-10 pb-24">
+    <section class="text-center fade-in">
+      <span class="inline-block px-4 py-1.5 rounded-full text-sm bg-white/5 border border-white/10 text-indigo-300 mb-6">
+        <i class="fa-solid fa-sparkles mr-2"></i>Vos idées, organisées et sécurisées
+      </span>
+      <h1 class="text-5xl md:text-6xl font-extrabold leading-tight">
+        Capturez chaque idée<br/>
+        <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">avant qu'elle ne s'envole.</span>
+      </h1>
+      <p class="mt-6 text-lg text-slate-300 max-w-2xl mx-auto">
+        Une application pensée pour noter, classer et retrouver toutes vos idées. Compte personnel, base de données locale SQLite, accès rapide.
+      </p>
+      <div class="mt-10 flex items-center justify-center gap-4">
+        <a href="register.html" class="btn btn-primary text-lg px-8 py-3">
+          <i class="fa-solid fa-rocket"></i> Commencer gratuitement
+        </a>
+        <a href="login.html" class="btn btn-ghost text-lg px-8 py-3">
+          <i class="fa-solid fa-right-to-bracket"></i> J'ai déjà un compte
+        </a>
+      </div>
+    </section>
+
+    <section class="mt-24 grid md:grid-cols-3 gap-6">
+      <div class="glass p-6 fade-in">
+        <div class="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center mb-4">
+          <i class="fa-solid fa-lock text-indigo-300 text-xl"></i>
+        </div>
+        <h3 class="font-semibold text-lg mb-2">Compte sécurisé</h3>
+        <p class="text-slate-400 text-sm">Inscription et connexion avec mot de passe chiffré (bcrypt) et jeton JWT.</p>
+      </div>
+      <div class="glass p-6 fade-in">
+        <div class="w-12 h-12 rounded-xl bg-pink-500/20 flex items-center justify-center mb-4">
+          <i class="fa-solid fa-database text-pink-300 text-xl"></i>
+        </div>
+        <h3 class="font-semibold text-lg mb-2">Base SQLite</h3>
+        <p class="text-slate-400 text-sm">Vos données sont stockées localement dans une base SQLite fiable et portable.</p>
+      </div>
+      <div class="glass p-6 fade-in">
+        <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center mb-4">
+          <i class="fa-solid fa-tags text-emerald-300 text-xl"></i>
+        </div>
+        <h3 class="font-semibold text-lg mb-2">Organisation</h3>
+        <p class="text-slate-400 text-sm">Catégories, couleurs, épinglage et recherche instantanée.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="text-center text-slate-500 text-sm py-8 border-t border-white/5">
+    © 2026-2029 Orinnovastudio Studio — Boîte à idées
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script>
+    (async () => {
+      try {
+        const r = await window.api.me();
+        if (r && r.user) window.location.href = 'app.html';
+      } catch (e) { /* Not logged in, stay on landing page */ }
+    })();
+  </script>
+</body>
+</html>

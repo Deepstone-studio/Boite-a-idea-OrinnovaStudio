@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connexion — Boîte à idées</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="flex items-center justify-center min-h-screen px-4">
+  <div class="w-full max-w-md fade-in">
+    <div class="text-center mb-8">
+      <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-pink-500 flex items-center justify-center shadow-lg mx-auto mb-4">
+        <i class="fa-solid fa-right-to-bracket text-white text-xl"></i>
+      </div>
+      <h1 class="text-2xl font-bold">Connexion</h1>
+      <p class="text-slate-400 text-sm mt-1">Accédez à vos idées</p>
+    </div>
+
+    <div class="glass-strong p-8">
+      <form id="loginForm" class="space-y-4">
+        <div>
+          <label class="block text-sm mb-1 text-slate-300">Email</label>
+          <div class="relative">
+            <i class="fa-solid fa-envelope absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
+            <input name="email" type="email" required class="input pl-10" placeholder="vous@exemple.com" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm mb-1 text-slate-300">Mot de passe</label>
+          <div class="relative">
+            <i class="fa-solid fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
+            <input name="password" type="password" required class="input pl-10" placeholder="••••••••" />
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary w-full justify-center mt-2">
+          <i class="fa-solid fa-right-to-bracket"></i> Se connecter
+        </button>
+      </form>
+      <p class="text-center text-sm text-slate-400 mt-6">
+        Pas de compte ? <a href="register.html" class="text-indigo-300 hover:underline">S'inscrire</a>
+      </p>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+  <script src="js/api.js"></script>
+  <script>
+    function showToast(msg, type='error') {
+      const t = document.getElementById('toast');
+      t.innerHTML = `<div class="toast ${type==='success'?'border-emerald-500/40':'border-red-500/40'}"><i class="fa-solid ${type==='success'?'fa-check-circle text-emerald-400':'fa-circle-exclamation text-red-400'} mr-2"></i>${msg}</div>`;
+      setTimeout(()=> t.innerHTML='', 3500);
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const f = e.target;
+      try {
+        const data = await window.api.login({ email: f.email.value, password: f.password.value });
+        if (data.error) throw new Error(data.error);
+        
+        // Assuming API returns { token: "...", user: {...} }
+        if(data.token) window.setToken(data.token);
+        
+        showToast('Connexion réussie', 'success');
+        setTimeout(() => window.location.href = 'app.html', 400);
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    (async () => {
+      try {
+        const r = await window.api.me();
+        if (r && r.user) window.location.href = 'app.html';
+      } catch (e) {}
+    })();
+  </script>
+</body>
+</html>

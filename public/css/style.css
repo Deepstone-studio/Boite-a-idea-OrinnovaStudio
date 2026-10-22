@@ -1,0 +1,163 @@
+:root {
+  --bg: #0b1020;
+  --bg2: #121833;
+  --glass: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --text: #e6e9f2;
+  --muted: #9aa3bf;
+  --accent: #7c5cff;
+  --accent2: #ff5c8a;
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color: var(--text);
+  background: radial-gradient(1200px 800px at 10% 10%, #1a1f4a 0%, transparent 60%),
+              radial-gradient(1000px 700px at 90% 90%, #2a1240 0%, transparent 60%),
+              linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+/* Ensure readable text everywhere */
+body, h1, h2, h3, h4, h5, h6, p, span, label, div { color: inherit; }
+.input, textarea, select, button { color: var(--text); }
+select option { color: #111827; background: #ffffff; }
+a { color: #a5b4fc; text-decoration: none; }
+a:hover { color: #c4b5fd; }
+
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+}
+
+.glass-strong {
+  background: rgba(255,255,255,0.09);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: transform .15s ease, box-shadow .15s ease, background .2s ease;
+  text-decoration: none;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(124,92,255,.35);
+}
+.btn-ghost {
+  background: rgba(255,255,255,.06);
+  color: var(--text);
+  border: 1px solid var(--glass-border);
+}
+.btn-danger {
+  background: rgba(239,68,68,.15);
+  color: #fca5a5;
+  border: 1px solid rgba(239,68,68,.3);
+}
+
+.input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid var(--glass-border);
+  color: var(--text);
+  outline: none;
+  transition: border .2s, box-shadow .2s;
+}
+.input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124,92,255,.25);
+}
+
+.card-idea {
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.card-idea:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 40px rgba(0,0,0,.35);
+}
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 100;
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: rgba(20,24,45,.95);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(12px);
+  animation: slideUp .25s ease;
+  display: flex;
+  align-items: center;
+}
+
+/* Add these to your existing style.css */
+
+.text-slate-400 {
+  color: #94a3b8 !important; /* Lighter than default */
+}
+
+.text-slate-500 {
+  color: #cbd5e1 !important;
+}
+
+/* Ensure all text is readable */
+body {
+  color: #e2e8f0 !important; /* Lighter text */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #f1f5f9 !important; /* Almost white */
+}
+
+/* Fix input placeholders */
+::placeholder {
+  color: #94a3b8 !important;
+  opacity: 1;
+}
+
+/* Fix button text */
+.btn {
+  color: #ffffff !important;
+}
+
+/* Fix label text */
+label {
+  color: #cbd5e1 !important;
+}
+@keyframes slideUp { from { transform: translateY(20px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+
+.fade-in { animation: fadeIn .4s ease; }
+@keyframes fadeIn { from { opacity:0; transform: translateY(8px);} to { opacity:1; transform: translateY(0);} }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); border-radius: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+.pinned-badge { animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.6; } }

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mon espace — Boîte à idées</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="min-h-screen">
+  <!-- Top bar -->
+  <header class="sticky top-0 z-30 backdrop-blur-xl bg-slate-900/60 border-b border-white/5">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-pink-500 flex items-center justify-center">
+          <i class="fa-solid fa-lightbulb text-white text-sm"></i>
+        </div>
+        <span class="font-bold">Boîte à idées</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="text-sm text-slate-400" id="userInfo"></div>
+        <button id="logoutBtn" class="btn btn-ghost py-2 px-3 text-sm">
+          <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
+        </button>
+        <button id="checkUpdateBtn" class="btn btn-ghost py-2 px-3 text-sm" title="Vérifier les mises à jour">
+  <i class="fa-solid fa-arrows-rotate"></i> Mises à jour
+</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 py-8">
+    <!-- Toolbar -->
+    <div class="flex flex-col md:flex-row gap-3 md:items-center md:justify-between mb-6">
+      <div class="flex flex-1 gap-3">
+        <div class="relative flex-1 max-w-md">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
+          <input id="searchInput" class="input pl-10" placeholder="Rechercher une idée..." />
+        </div>
+        <select id="categoryFilter" class="input w-40">
+          <option value="all">Toutes</option>
+          <option value="general">Général</option>
+          <option value="travail">Travail</option>
+          <option value="perso">Perso</option>
+          <option value="projet">Projet</option>
+          <option value="autre">Autre</option>
+        </select>
+        <button id="pinnedFilter" class="btn btn-ghost py-2 px-3" title="Épinglées uniquement">
+          <i class="fa-solid fa-thumbtack"></i>
+        </button>
+      </div>
+      <button id="newIdeaBtn" class="btn btn-primary">
+        <i class="fa-solid fa-plus"></i> Nouvelle idée
+      </button>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="glass p-4">
+        <div class="text-slate-400 text-xs">Total</div>
+        <div class="text-2xl font-bold" id="statTotal">0</div>
+      </div>
+      <div class="glass p-4">
+        <div class="text-slate-400 text-xs">Épinglées</div>
+        <div class="text-2xl font-bold" id="statPinned">0</div>
+      </div>
+      <div class="glass p-4">
+        <div class="text-slate-400 text-xs">Catégories</div>
+        <div class="text-2xl font-bold" id="statCats">0</div>
+      </div>
+      <div class="glass p-4">
+        <div class="text-slate-400 text-xs">Cette semaine</div>
+        <div class="text-2xl font-bold" id="statWeek">0</div>
+      </div>
+    </div>
+
+    <!-- Grid -->
+    <div id="ideasGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+    <div id="emptyState" class="hidden text-center py-20">
+      <div class="w-20 h-20 rounded-2xl bg-white/5 flex items-center justify-center mx-auto mb-4">
+        <i class="fa-solid fa-lightbulb text-3xl text-slate-500"></i>
+      </div>
+      <h3 class="text-lg font-semibold mb-1">Aucune idée pour le moment</h3>
+      <p class="text-slate-400 text-sm">Cliquez sur « Nouvelle idée » pour commencer.</p>
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div id="modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="modalBackdrop"></div>
+    <div class="relative glass-strong w-full max-w-lg p-6 fade-in">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold" id="modalTitle">Nouvelle idée</h2>
+        <button id="modalClose" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+      </div>
+      <form id="ideaForm" class="space-y-4">
+        <input type="hidden" name="id" />
+        <div>
+          <label class="block text-sm mb-1 text-slate-300">Titre</label>
+          <input name="title" required class="input" placeholder="Une idée brillante..." />
+        </div>
+        <div>
+          <label class="block text-sm mb-1 text-slate-300">Contenu</label>
+          <textarea name="content" rows="4" class="input resize-none" placeholder="Détails, notes, liens..."></textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-sm mb-1 text-slate-300">Catégorie</label>
+            <select name="category" class="input">
+              <option value="general">Général</option>
+              <option value="travail">Travail</option>
+              <option value="perso">Perso</option>
+              <option value="projet">Projet</option>
+              <option value="autre">Autre</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm mb-1 text-slate-300">Couleur</label>
+            <div class="flex gap-2 items-center">
+              <input name="color" type="color" value="#6366f1" class="w-12 h-10 rounded-lg border border-white/10 bg-transparent cursor-pointer" />
+              <span class="text-xs text-slate-400">Accent</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex justify-end gap-3 pt-2">
+          <button type="button" id="modalCancel" class="btn btn-ghost">Annuler</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-floppy-disk"></i> Enregistrer
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div id="updateToast" class="hidden fixed bottom-24 right-24 z-100 glass p-4 fade-in max-w-sm">
+  <div class="flex items-center gap-3">
+    <i class="fa-solid fa-download text-indigo-400 text-xl"></i>
+    <div>
+      <div class="font-semibold text-sm">Mise à jour disponible</div>
+      <div class="text-xs text-slate-400 mt-1" id="updateVersionInfo"></div>
+      <div class="w-full bg-white/10 rounded-full h-1.5 mt-2 overflow-hidden">
+        <div id="updateProgressBar" class="bg-gradient-to-r from-indigo-500 to-pink-500 h-full transition-all duration-300" style="width: 0%"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  <div id="toast"></div>
+
+  <script>
+    const $ = (s) => document.querySelector(s);
+    const $$ = (s) => document.querySelectorAll(s);
+
+
+    let state = { ideas: [], search: '', category: 'all', pinnedOnly: false, editingId: null };
+  // Écouter les événements de mise à jour
+  window.api.onUpdateAvailable((info) => {
+    const toast = document.getElementById('updateToast');
+    const versionInfo = document.getElementById('updateVersionInfo');
+    toast.classList.remove('hidden');
+    versionInfo.textContent = `Version ${info.version} en cours de téléchargement...`;
+  });
+
+  window.api.onDownloadProgress((percent) => {
+    const bar = document.getElementById('updateProgressBar');
+    bar.style.width = `${percent}%`;
+  });
+
+// Bouton de vérification manuelle
+document.getElementById('checkUpdateBtn')?.addEventListener('click', async () => {
+  await window.api.checkUpdate();
+});
+    function showToast(msg, type='error') {
+      const t = $('#toast');
+      t.innerHTML = `<div class="toast ${type==='success'?'border-emerald-500/40':'border-red-500/40'}"><i class="fa-solid ${type==='success'?'fa-check-circle text-emerald-400':'fa-circle-exclamation text-red-400'} mr-2"></i>${msg}</div>`;
+      setTimeout(()=> t.innerHTML='', 3500);
+    }
+
+    async function loadUser() {
+      const r = await window.api.me();
+      if (!r || !r.user) { window.location.href = '/login.html'; return; }
+      $('#userInfo').textContent = r.user.username;
+    }
+
+    async function loadIdeas() {
+      const q = {};
+      if (state.search) q.search = state.search;
+      if (state.category && state.category !== 'all') q.category = state.category;
+      if (state.pinnedOnly) q.pinned = '1';
+      const r = await window.api.listIdeas(q);
+      if (r.error) { showToast(r.error); return; }
+      state.ideas = r.ideas || [];
+      render();
+      updateStats();
+    }
+
+    function updateStats() {
+      const total = state.ideas.length;
+      const pinned = state.ideas.filter(i => i.pinned).length;
+      const cats = new Set(state.ideas.map(i => i.category)).size;
+      const weekAgo = Date.now() - 7*24*60*60*1000;
+      const week = state.ideas.filter(i => new Date(i.created_at).getTime() >= weekAgo).length;
+      $('#statTotal').textContent = total;
+      $('#statPinned').textContent = pinned;
+      $('#statCats').textContent = cats;
+      $('#statWeek').textContent = week;
+    }
+
+    function categoryLabel(c) {
+      return { general:'Général', travail:'Travail', perso:'Perso', projet:'Projet', autre:'Autre' }[c] || c;
+    }
+
+    function escapeHtml(s) {
+      return String(s||'').replace(/[&<>"']/g, (m)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+
+    function render() {
+      const grid = $('#ideasGrid');
+      const empty = $('#emptyState');
+      if (!state.ideas.length) {
+        grid.innerHTML = '';
+        empty.classList.remove('hidden');
+        return;
+      }
+      empty.classList.add('hidden');
+      grid.innerHTML = state.ideas.map(idea => `
+        <div class="glass card-idea p-5 flex flex-col" style="border-left: 4px solid ${idea.color}">
+          <div class="flex items-start justify-between gap-2 mb-2">
+            <h3 class="font-semibold text-lg leading-tight">${escapeHtml(idea.title)}</h3>
+            <div class="flex items-center gap-1 shrink-0">
+              <button data-action="pin" data-id="${idea.id}" class="text-slate-400 hover:text-amber-300 p-1" title="Épingler">
+                <i class="fa-solid fa-thumbtack ${idea.pinned?'text-amber-300 pinned-badge':''}"></i>
+              </button>
+              <button data-action="edit" data-id="${idea.id}" class="text-slate-400 hover:text-indigo-300 p-1" title="Modifier">
+                <i class="fa-solid fa-pen"></i>
+              </button>
+              <button data-action="delete" data-id="${idea.id}" class="text-slate-400 hover:text-red-400 p-1" title="Supprimer">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          </div>
+          <p class="text-slate-300 text-sm flex-1 whitespace-pre-wrap">${escapeHtml(idea.content)}</p>
+          <div class="flex items-center justify-between mt-4 pt-3 border-t border-white/5">
+            <span class="text-xs px-2 py-1 rounded-full bg-white/5 text-slate-300">${categoryLabel(idea.category)}</span>
+            <span class="text-xs text-slate-500">${new Date(idea.updated_at).toLocaleDateString('fr-FR')}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Modal controls
+    function openModal(idea = null) {
+      const modal = $('#modal');
+      modal.classList.remove('hidden');
+      const form = $('#ideaForm');
+      form.reset();
+      if (idea) {
+        $('#modalTitle').textContent = 'Modifier l’idée';
+        form.id.value = idea.id;
+        form.title.value = idea.title;
+        form.content.value = idea.content;
+        form.category.value = idea.category;
+        form.color.value = idea.color;
+        state.editingId = idea.id;
+      } else {
+        $('#modalTitle').textContent = 'Nouvelle idée';
+        form.id.value = '';
+        state.editingId = null;
+      }
+    }
+    function closeModal() {
+      $('#modal').classList.add('hidden');
+      state.editingId = null;
+    }
+
+    $('#newIdeaBtn').addEventListener('click', () => openModal());
+    $('#modalClose').addEventListener('click', closeModal);
+    $('#modalCancel').addEventListener('click', closeModal);
+    $('#modalBackdrop').addEventListener('click', closeModal);
+
+    $('#ideaForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const f = e.target;
+      const payload = {
+        title: f.title.value,
+        content: f.content.value,
+        category: f.category.value,
+        color: f.color.value,
+      };
+      try {
+        if (state.editingId) {
+          const r = await window.api.updateIdea(state.editingId, payload);
+          if (r.error) throw new Error(r.error);
+          showToast('Idée mise à jour', 'success');
+        } else {
+          const r = await window.api.createIdea(payload);
+          if (r.error) throw new Error(r.error);
+          showToast('Idée créée', 'success');
+        }
+        closeModal();
+        await loadIdeas();
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    // grid actions (delegation)
+    $('#ideasGrid').addEventListener('click', async (e) => {
+      const btn = e.target.closest('button[data-action]');
+      if (!btn) return;
+      const id = Number(btn.dataset.id);
+      const action = btn.dataset.action;
+      const idea = state.ideas.find(i => i.id === id);
+      if (action === 'edit') openModal(idea);
+      else if (action === 'delete') {
+        if (!confirm('Supprimer cette idée ?')) return;
+        const r = await window.api.deleteIdea(id);
+        if (r.error) showToast(r.error);
+        else { showToast('Idée supprimée', 'success'); await loadIdeas(); }
+      } else if (action === 'pin') {
+        const r = await window.api.pinIdea(id);
+        if (r.error) showToast(r.error);
+        else await loadIdeas();
+      }
+    });
+
+    // filters
+    $('#searchInput').addEventListener('input', (e) => {
+      state.search = e.target.value;
+      loadIdeas();
+    });
+    $('#categoryFilter').addEventListener('change', (e) => {
+      state.category = e.target.value;
+      loadIdeas();
+    });
+    $('#pinnedFilter').addEventListener('click', () => {
+      state.pinnedOnly = !state.pinnedOnly;
+      $('#pinnedFilter').classList.toggle('btn-primary', state.pinnedOnly);
+      $('#pinnedFilter').classList.toggle('btn-ghost', !state.pinnedOnly);
+      loadIdeas();
+    });
+
+    $('#logoutBtn').addEventListener('click', async () => {
+      await window.api.logout();
+      window.location.href = '/login.html';
+    });
+
+    // init
+    (async () => {
+      await loadUser();
+      await loadIdeas();
+    })();
+  </script>
+</body>
+</html>
